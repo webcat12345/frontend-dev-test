@@ -1,8 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
 import { HttpStatusModule } from 'http-status-pipe';
-import { AuthService } from 'stub';
+
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { AuthService } from './core/services/auth.service';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -34,10 +38,12 @@ const routes: Routes = [
     ],
     imports: [
         BrowserModule,
+        HttpClientModule,
         RouterModule.forRoot(routes),
         HttpStatusModule
     ],
     providers: [
+        {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
         AuthService
     ],
     bootstrap: [AppComponent]
