@@ -19,6 +19,14 @@ const routes: Routes = [
         component: HomeComponent
     },
     {
+        path: 'login',
+        loadChildren: './pages/login/login.module#LoginModule'
+    },
+    {
+        path: 'logout',
+        loadChildren: './pages/logout/logout.module#LogoutModule'
+    },
+    {
         path: 'error/:status_code',
         component: ErrorComponent
     },
