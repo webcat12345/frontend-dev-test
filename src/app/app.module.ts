@@ -3,6 +3,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AppEffects } from './state/effects/app.effects';
+import { reducers, metaReducers } from './state/reducers';
+import { environment } from '../environments/environment';
+
 import { HttpStatusModule } from 'http-status-pipe';
 
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
@@ -19,12 +26,17 @@ const routes: Routes = [
         component: HomeComponent
     },
     {
-        path: 'login',
-        loadChildren: './pages/login/login.module#LoginModule'
-    },
-    {
-        path: 'logout',
-        loadChildren: './pages/logout/logout.module#LogoutModule'
+        path: 'auth',
+        children: [
+            {
+                path: 'login',
+                loadChildren: './pages/login/login.module#LoginModule'
+            },
+            {
+                path: 'logout',
+                loadChildren: './pages/logout/logout.module#LogoutModule'
+            },
+        ]
     },
     {
         path: 'error/:status_code',
@@ -48,7 +60,10 @@ const routes: Routes = [
         BrowserModule,
         HttpClientModule,
         RouterModule.forRoot(routes),
-        HttpStatusModule
+        HttpStatusModule,
+        StoreModule.forRoot(reducers, { metaReducers }),
+        !environment.production ? StoreDevtoolsModule.instrument() : [],
+        EffectsModule.forRoot([AppEffects])
     ],
     providers: [
         {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
